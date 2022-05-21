@@ -1,13 +1,18 @@
 package com.room001.freetimeproject;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FreeTimeProjectApplication {
+public class FreeTimeProjectApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(FreeTimeProjectApplication.class, args);
     }
 
+    @Override
+    public void run(String... args) throws Exception {
+
+    }
 }
