@@ -22,4 +22,15 @@ public class User {
     // need to hash password
     private String password;
     private int points;
+
+    public User(String nick, String email, String password, int points) {
+        this.nick = nick;
+        this.email = email;
+        this.password = password;
+        this.points = points;
+    }
+
+    public User() {
+
+    }
 }
