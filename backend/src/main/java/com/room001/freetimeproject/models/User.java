@@ -17,20 +17,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String nick;
+    private String username;
     private String email;
     // need to hash password
     private String password;
     private int points;
 
-    public User(String nick, String email, String password, int points) {
-        this.nick = nick;
+    public User(String username, String email, String password, int points) {
+        this.username = username;
         this.email = email;
         this.password = password;
         this.points = points;
     }
 
     public User() {
-
     }
 }
