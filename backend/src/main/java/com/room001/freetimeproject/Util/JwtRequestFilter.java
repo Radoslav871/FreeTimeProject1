@@ -21,9 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+// this is called with every endpoint request
 public class JwtRequestFilter extends OncePerRequestFilter {
-    @Autowired
-    private UserRepositories userRepositories;
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired

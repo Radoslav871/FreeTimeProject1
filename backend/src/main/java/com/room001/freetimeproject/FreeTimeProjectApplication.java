@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -27,14 +26,13 @@ public class FreeTimeProjectApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
     }
 
     @EnableWebSecurity
     class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Autowired
-        private UserDetailsService myUserDetailsService;
+        private MyUserDetailsService myUserDetailsService;
         @Autowired
         private JwtRequestFilter jwtRequestFilter;
 
@@ -54,10 +52,11 @@ public class FreeTimeProjectApplication implements CommandLineRunner {
             return super.authenticationManagerBean();
         }
 
+        // here you add endpoint that you can call without auth
         @Override
         protected void configure(HttpSecurity httpSecurity) throws Exception {
             httpSecurity.csrf().disable().authorizeRequests()
-                    .antMatchers("/free-time").permitAll()
+                    .antMatchers("/login").permitAll()
                     .antMatchers("/register").permitAll().
                     anyRequest().authenticated().and().
                     exceptionHandling().and().sessionManagement()

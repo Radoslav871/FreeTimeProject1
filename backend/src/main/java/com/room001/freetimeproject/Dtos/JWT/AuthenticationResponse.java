@@ -1,4 +1,4 @@
-package com.room001.freetimeproject.Dtos.User;
+package com.room001.freetimeproject.Dtos.JWT;
 
 import java.io.Serializable;
 

@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-public class User {
+public class UserModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +23,18 @@ public class User {
     private String password;
     private int points;
 
-    public User(String username, String email, String password, int points) {
+    public UserModel(String username, String email, String password, int points) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.points = points;
     }
 
-    public User() {
+    public UserModel(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserModel() {
     }
 }

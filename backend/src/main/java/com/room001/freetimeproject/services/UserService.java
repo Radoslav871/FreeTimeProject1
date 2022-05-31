@@ -1,14 +1,16 @@
 package com.room001.freetimeproject.services;
 
-
 import com.room001.freetimeproject.Dtos.User.LoginRequestDTO;
 import com.room001.freetimeproject.Dtos.User.RegisterNewUser;
-import com.room001.freetimeproject.models.User;
+import com.room001.freetimeproject.Util.MyUserDetailsService;
+import com.room001.freetimeproject.models.UserModel;
 import com.room001.freetimeproject.repositories.UserRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +19,13 @@ public class UserService implements IUserService {
     private UserRepositories userRepositories;
 
     @Autowired
-    public UserService(@Qualifier("userRepo")UserRepositories userRepositories) {
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private MyUserDetailsService userDetailsService;
+
+    @Autowired
+    public UserService(@Qualifier("userRepo") UserRepositories userRepositories) {
         this.userRepositories = userRepositories;
     }
 
@@ -25,20 +33,21 @@ public class UserService implements IUserService {
     public void RegisterNewUser(RegisterNewUser registerNewUser) {
 
         // add check if user already exist email & password is correct format
-        userRepositories.save(new User(registerNewUser.nickName, registerNewUser.email, registerNewUser.password, 0));
+        userRepositories.save(new UserModel(registerNewUser.nickName, registerNewUser.email, registerNewUser.password, 0));
     }
 
     @Override
-    public ResponseEntity LogUser(LoginRequestDTO loginRequestDTO) {
+    public UserDetails LoginCheck(LoginRequestDTO loginRequestDTO) throws Exception {
 
-        // check password and email
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.userName, loginRequestDTO.password));
 
-        User tempUser = userRepositories.findByEmail(loginRequestDTO.userName);
-
-        if (tempUser != null) {
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            throw new RuntimeException("User not Found");
+        } catch (BadCredentialsException e) {
+            throw new Exception("Incorrect username or password", e);
         }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.userName);
+
+        return userDetails;
     }
 }
