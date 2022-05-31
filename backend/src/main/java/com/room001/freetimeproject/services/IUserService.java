@@ -5,6 +5,6 @@ import com.room001.freetimeproject.Dtos.User.RegisterNewUser;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface IUserService {
-    void RegisterNewUser(RegisterNewUser registerNewUser);
+    void RegisterNewUser(RegisterNewUser registerNewUser) throws Exception;
     UserDetails LoginCheck(LoginRequestDTO loginRequestDTO) throws Exception;
 }
