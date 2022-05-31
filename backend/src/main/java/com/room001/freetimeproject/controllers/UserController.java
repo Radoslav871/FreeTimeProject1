@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UserController {
 
-
     private IUserService iUserService;
 
     @Autowired
@@ -42,7 +41,7 @@ public class UserController {
 
     //================Register=================
     @PostMapping("/register")
-    public ResponseEntity RegisterNewUser(@RequestBody RegisterNewUser registerNewUser) {
+    public ResponseEntity RegisterNewUser(@RequestBody RegisterNewUser registerNewUser) throws Exception {
 
         iUserService.RegisterNewUser(registerNewUser);
         return new ResponseEntity(HttpStatus.OK);
