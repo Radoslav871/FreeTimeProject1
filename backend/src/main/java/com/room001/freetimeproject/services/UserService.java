@@ -11,12 +11,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements IUserService {
 
     private UserRepositories userRepositories;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -27,12 +30,15 @@ public class UserService implements IUserService {
     @Autowired
     public UserService(@Qualifier("userRepo") UserRepositories userRepositories) {
         this.userRepositories = userRepositories;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override
     public void RegisterNewUser(RegisterNewUser registerNewUser) throws Exception {
 
         boolean exist = checkCredentials(registerNewUser);
+
+        registerNewUser.password = this.passwordEncoder.encode(registerNewUser.password);
 
         userRepositories.save(new UserModel(registerNewUser.userName, registerNewUser.email, registerNewUser.password, 0));
     }
@@ -76,15 +82,25 @@ public class UserService implements IUserService {
     @Override
     public UserDetails LoginCheck(LoginRequestDTO loginRequestDTO) throws Exception {
 
+        UserDetails user = null;
+
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.userName, loginRequestDTO.password));
+            user = userRepositories.findByUsername(loginRequestDTO.userName);
+            boolean decryptPassword = DecrypPassword(loginRequestDTO,user);
+
+            if (!decryptPassword){
+                throw new Exception("Incorrect password");
+            }
 
         } catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
+            throw new Exception("Incorrect username", e);
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.userName);
+        return user;
+    }
 
-        return userDetails;
+    private boolean DecrypPassword(LoginRequestDTO loginRequestDTO,UserDetails user) {
+
+        return this.passwordEncoder.matches(loginRequestDTO.password,user.getPassword());
     }
 }
