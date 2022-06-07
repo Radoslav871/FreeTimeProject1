@@ -57,7 +57,9 @@ public class FreeTimeProjectApplication implements CommandLineRunner {
         protected void configure(HttpSecurity httpSecurity) throws Exception {
             httpSecurity.csrf().disable().authorizeRequests()
                     .antMatchers("/login").permitAll()
-                    .antMatchers("/register").permitAll().
+                    .antMatchers("/register").permitAll()
+                    .antMatchers("/game").permitAll()
+                    .antMatchers("/gameAdd").permitAll().
                     anyRequest().authenticated().and().
                     exceptionHandling().and().sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
