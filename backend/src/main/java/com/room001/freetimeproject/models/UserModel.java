@@ -19,7 +19,6 @@ public class UserModel {
 
     private String username;
     private String email;
-    // need to hash password
     private String password;
     private int points;
 
@@ -28,11 +27,6 @@ public class UserModel {
         this.email = email;
         this.password = password;
         this.points = points;
-    }
-
-    public UserModel(String username, String password) {
-        this.username = username;
-        this.password = password;
     }
 
     public UserModel() {
