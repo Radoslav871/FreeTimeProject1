@@ -1,5 +1,6 @@
 package com.room001.freetimeproject.Util;
 
+import com.room001.freetimeproject.models.UserModel;
 import com.room001.freetimeproject.repositories.UserRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -23,7 +24,7 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        UserDetails user = userRepositories.findByUsername(username);
+        UserModel user = userRepositories.findByUsername(username);
 
         return new User(user.getUsername(), user.getPassword(),
                 new ArrayList<>());

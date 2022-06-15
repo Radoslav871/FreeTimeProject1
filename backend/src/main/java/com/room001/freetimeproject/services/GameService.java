@@ -3,11 +3,14 @@ package com.room001.freetimeproject.services;
 import com.room001.freetimeproject.Dtos.game.GameResponse;
 import com.room001.freetimeproject.models.QuestionImage;
 import com.room001.freetimeproject.models.QuestionName;
+import com.room001.freetimeproject.models.UserModel;
 import com.room001.freetimeproject.repositories.QuestionImageRepositories;
 import com.room001.freetimeproject.repositories.QuestionNameRepositories;
+import com.room001.freetimeproject.repositories.UserRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,33 +20,68 @@ public class GameService implements IGameService {
 
     private QuestionImageRepositories questionImageRepositories;
     private QuestionNameRepositories questionNameRepositories;
+    private UserRepositories userRepositories;
 
     // you have question name class that stores name of game
     // and question image stores path to the picture and id of question name
 
     @Autowired
-    public GameService(QuestionImageRepositories questionImageRepositories, QuestionNameRepositories questionNameRepositories) {
+    public GameService(QuestionImageRepositories questionImageRepositories, QuestionNameRepositories questionNameRepositories, UserRepositories userRepositories) {
         this.questionImageRepositories = questionImageRepositories;
         this.questionNameRepositories = questionNameRepositories;
+        this.userRepositories = userRepositories;
     }
 
     @Override
-    public GameResponse StartGame() {
+    public GameResponse StartGame(String username) {
 
-        // add random can't pick 2 images with same id
-        // after time is implemented add functionality that you can play max 3 times a day
         // also add check that you will not get same pic in 1 game and then in 2 or 3
+        UserModel user = userRepositories.findByUsername(username);
 
-        long max = questionImageRepositories.count();
-        Random random = new Random();
-        List<QuestionImage> questionImages = new ArrayList<>();
+        CheckBeforeGame(user);
 
-        for (int i = 0; i < 2; i++) {
-            long temp = random.nextInt(1,(int) max);
-            questionImages.add(questionImageRepositories.findAllById(temp));
+        GameResponse gameResponse = GenerateRandomPictures();
+
+        return gameResponse;
+    }
+
+    private boolean CheckBeforeGame(UserModel user) {
+
+        LocalDateTime userLastVote = user.getLastVote();
+        LocalDateTime timeNow = LocalDateTime.now();
+
+        if (userLastVote.getDayOfYear() >= timeNow.getDayOfYear()) {
+            // throwing exception might be a problem but this is future Rado problem :)
+            throw new RuntimeException("Can t vote more than once per day");
         }
 
+        user.setLastVote(timeNow);
+        userRepositories.save(user);
+        return true;
+    }
+
+    private GameResponse GenerateRandomPictures() {
+        long max = questionImageRepositories.count();
+
+        Random random = new Random();
+
+        List<QuestionImage> questionImages = new ArrayList<>();
         GameResponse gameResponse = new GameResponse(questionImages);
+
+        ArrayList<Long> randomNumbers = new ArrayList<Long>(2);
+
+        while (randomNumbers.size() < 2) {
+
+            long temp = random.nextInt(1, (int) max + 1);
+            if (!randomNumbers.contains(temp)) {
+                randomNumbers.add(temp);
+            }
+        }
+
+        for (int i = 0; i < 2; i++) {
+            questionImages.add(questionImageRepositories.findAllById(randomNumbers.get(i)));
+        }
+
         return gameResponse;
     }
 
