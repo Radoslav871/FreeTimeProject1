@@ -58,7 +58,6 @@ public class FreeTimeProjectApplication implements CommandLineRunner {
             httpSecurity.csrf().disable().authorizeRequests()
                     .antMatchers("/login").permitAll()
                     .antMatchers("/register").permitAll()
-                    .antMatchers("/game").permitAll()
                     .antMatchers("/gameAdd").permitAll().
                     anyRequest().authenticated().and().
                     exceptionHandling().and().sessionManagement()

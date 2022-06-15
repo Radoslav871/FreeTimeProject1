@@ -13,10 +13,15 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
+    // add this to the system var
     private String SECRET_KEY = "secret";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractId(String token) {
+        return extractClaim(token, Claims::getId);
     }
 
     public Date extractExpiration(String token) {
