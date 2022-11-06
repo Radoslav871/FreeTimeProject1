@@ -1,6 +1,7 @@
 import {Routes} from "@angular/router";
 import {EmptyScreenLayoutComponent} from "./empty-screen-layout.component";
 import {AuthSignInComponent} from "../../../auth/sign-in/auth-sign-in.component";
+import {RegisterComponent} from "../../../auth/register/register.component";
 
 export const emptyScreenLayoutRoutes: Routes = [
   {
@@ -18,6 +19,10 @@ export const emptyScreenLayoutRoutes: Routes = [
           {
             path: 'sign-in',
             component: AuthSignInComponent
+          },
+          {
+            path: 'register',
+            component: RegisterComponent
           }
         ]
       }

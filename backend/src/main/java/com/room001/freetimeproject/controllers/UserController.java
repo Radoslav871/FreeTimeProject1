@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
     private IUserService iUserService;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     //================Register=================
-    @PostMapping("/register")
+    @PostMapping("/register/user")
     public ResponseEntity RegisterNewUser(@RequestBody RegisterNewUser registerNewUser) throws Exception {
 
         iUserService.RegisterNewUser(registerNewUser);
